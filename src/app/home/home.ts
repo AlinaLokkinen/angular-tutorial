@@ -1,17 +1,23 @@
-import {Component, inject} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {HousingLocation} from '../housing-location/housing-location';
-import {HousingLocationInfo} from '../housinglocation';
-import { HousingService } from '../housing';
+import { Component, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { HousingLocation } from "../housing-location/housing-location";
+import { HousingLocationInfo } from "../housinglocation";
+import { HousingService } from "../housing";
 
 @Component({
-  selector: 'app-home',
+  selector: "app-home",
   imports: [CommonModule, HousingLocation],
   template: `
     <section>
       <form>
         <input type="text" placeholder="Filter by city" #filter />
-        <button class="primary" type="button" (click)="filterResults(filter.value)">Search</button>
+        <button
+          class="primary"
+          type="button"
+          (click)="filterResults(filter.value)"
+        >
+          Search
+        </button>
       </form>
     </section>
     <section class="results">
@@ -21,10 +27,10 @@ import { HousingService } from '../housing';
       ></app-housing-location>
     </section>
   `,
-  styleUrls: ['./home.css'],
+  styleUrls: ["./home.css"],
 })
 export class Home {
-  readonly baseUrl = 'https://angular.dev/assets/images/tutorials/common';
+  readonly baseUrl = "https://angular.dev/assets/images/tutorials/common";
   housingLocationList: HousingLocationInfo[] = [];
 
   housingService: HousingService = inject(HousingService);
@@ -32,8 +38,11 @@ export class Home {
   filteredLocationList: HousingLocationInfo[] = [];
 
   constructor() {
-    this.housingLocationList = this.housingService.getAllHousingLocations();
-    this.filteredLocationList = this.housingLocationList;
+    this.housingService.getAllHousingLocations()
+    .then((housingLocationList: HousingLocationInfo[]) => {
+      this.housingLocationList = housingLocationList;
+      this.filteredLocationList = housingLocationList;
+    });
   }
 
   filterResults(text: string) {
@@ -42,9 +51,9 @@ export class Home {
       return;
     }
 
-    this.filteredLocationList = this.housingLocationList.filter((housingLocation) => 
-      housingLocation?.city.toLowerCase().includes(text.toLowerCase()),
+    this.filteredLocationList = this.housingLocationList.filter(
+      (housingLocation) =>
+        housingLocation?.city.toLowerCase().includes(text.toLowerCase())
     );
   }
-
 }
